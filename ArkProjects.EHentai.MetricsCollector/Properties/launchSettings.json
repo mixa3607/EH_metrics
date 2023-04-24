@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "DEV": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "environmentVariables": {
+        "Kestrel__Endpoints__Http__Url": "http://0.0.0.0:5960",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

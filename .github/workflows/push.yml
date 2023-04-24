@@ -1,0 +1,49 @@
+name: build-container
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: env vars
+        run: |
+          echo "DOCKER_BUILDKIT=1"                >> ${GITHUB_ENV}
+          echo "REGISTRY=ghcr.io"                 >> ${GITHUB_ENV}
+          echo "IMAGE_NAME=${REPO,,}"             >> ${GITHUB_ENV}
+          echo "IMAGE_TAG1=${SHA,,}"              >> ${GITHUB_ENV}
+          echo "IMAGE_TAG2=${REF_NAME,,}"         >> ${GITHUB_ENV}
+          echo "GIT_REF=${GIT_REF}"               >> ${GITHUB_ENV}
+          echo "GIT_REF_TYPE=${GIT_REF_TYPE}"     >> ${GITHUB_ENV}
+          echo "GIT_COMMIT_SHA=${GIT_COMMIT_SHA}" >> ${GITHUB_ENV}
+          echo "PROJECT_URL=${PROJECT_URL}"       >> ${GITHUB_ENV}
+          echo "REPO_URL=${REPO_URL}"             >> ${GITHUB_ENV}
+        env:
+          GIT_REF: ${{ github.ref_name }}
+          GIT_REF_TYPE: ${{ github.ref_type }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          REPO: "${{ github.repository }}"
+          PROJECT_URL: ${{ github.server_url }}/${{ github.repository }}
+          REPO_URL: ${{ github.repositoryUrl }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Config
+        run: docker compose --env-file ./docker/build.env config
+      - name: Build
+        run: export IMAGE_TAG=TMP && docker compose --env-file ./docker/build.env build
+      - name: Push
+        run: |
+          docker tag $REGISTRY/$IMAGE_NAME:TMP $REGISTRY/$IMAGE_NAME:$IMAGE_TAG1
+          docker tag $REGISTRY/$IMAGE_NAME:TMP $REGISTRY/$IMAGE_NAME:$IMAGE_TAG2
+          docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG1
+          docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG2

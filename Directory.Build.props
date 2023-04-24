@@ -1,0 +1,52 @@
+<Project>
+	<PropertyGroup>
+		<!--For manual nuget build you must export GIT_REF_TYPE=tag and GIT_REF=v<version> to env-->
+
+		<!--extract version from tag-->
+		<VERSION Condition="'$(VERSION)' == '' and '$(GIT_REF_TYPE)' == 'tag'">$([System.Text.RegularExpressions.Regex]::Match($(GIT_REF), 'v(?&lt;ver&gt;(\d+\.)*\d+)').Groups['ver'].Value)</VERSION>
+		<VERSION Condition="'$(VERSION)' == ''">0.0.0</VERSION>
+		<FULL_VERSION Condition="'$(FULL_VERSION)' == ''">$(VERSION)</FULL_VERSION>
+
+		<BUILD_DATE>$([System.DateTime]::Now.ToString())</BUILD_DATE>
+
+		<!--source link-->
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>$(REPO_URL)</RepositoryUrl>
+		<RepositoryBranch>$(GIT_REF)</RepositoryBranch>
+		<RepositoryCommit>$(GIT_COMMIT_SHA)</RepositoryCommit>
+		<PackageProjectUrl>$(PROJECT_URL)</PackageProjectUrl>
+
+		<!--versions-->
+		<AssemblyVersion>$(VERSION)</AssemblyVersion>
+		<FileVersion>$(VERSION)</FileVersion>
+		<Version>$(VERSION)</Version>
+		<PackageVersion>$(FULL_VERSION)</PackageVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(GIT_REF)' != ''">
+			<_Parameter1>GIT_REF</_Parameter1>
+			<_Parameter2>$(GIT_REF)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(GIT_REF_TYPE)' != ''">
+			<_Parameter1>GIT_REF_TYPE</_Parameter1>
+			<_Parameter2>$(GIT_REF_TYPE)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(GIT_COMMIT_SHA)' != ''">
+			<_Parameter1>GIT_COMMIT_SHA</_Parameter1>
+			<_Parameter2>$(GIT_COMMIT_SHA)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(BUILD_DATE)' != ''">
+			<_Parameter1>BUILD_DATE</_Parameter1>
+			<_Parameter2>$(BUILD_DATE)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(PROJECT_URL)' != ''">
+			<_Parameter1>PROJECT_URL</_Parameter1>
+			<_Parameter2>$(PROJECT_URL)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(REPO_URL)' != ''">
+			<_Parameter1>REPO_URL</_Parameter1>
+			<_Parameter2>$(REPO_URL)</_Parameter2>
+		</AssemblyAttribute>
+	</ItemGroup>
+</Project>
