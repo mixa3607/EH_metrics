@@ -17,8 +17,8 @@ jobs:
           echo "DOCKER_BUILDKIT=1"                >> ${GITHUB_ENV}
           echo "REGISTRY=ghcr.io"                 >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${REPO,,}"             >> ${GITHUB_ENV}
-          echo "IMAGE_TAG1=${SHA,,}"              >> ${GITHUB_ENV}
-          echo "IMAGE_TAG2=${REF_NAME,,}"         >> ${GITHUB_ENV}
+          echo "IMAGE_TAG1=${GIT_COMMIT_SHA,,}"   >> ${GITHUB_ENV}
+          echo "IMAGE_TAG2=${GIT_REF,,}"          >> ${GITHUB_ENV}
           echo "GIT_REF=${GIT_REF}"               >> ${GITHUB_ENV}
           echo "GIT_REF_TYPE=${GIT_REF_TYPE}"     >> ${GITHUB_ENV}
           echo "GIT_COMMIT_SHA=${GIT_COMMIT_SHA}" >> ${GITHUB_ENV}
