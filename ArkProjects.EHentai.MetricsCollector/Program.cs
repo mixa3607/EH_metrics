@@ -40,7 +40,8 @@ builder.Host.UseSerilog((ctx, l) =>
         .Enrich.WithAssemblyName()
         .Enrich.WithAssemblyVersion()
         .Enrich.WithMemoryUsage()
-        .Destructure.ByTransforming<ExpandoObject>(e => new Dictionary<string, object>(e));
+        .Destructure.ByTransforming<ExpandoObject>(e => new Dictionary<string, object>(e))
+        .Destructure.ToMaximumDepth(5);
 
     if (!serilogOptions.DisableElastic)
     {
@@ -156,11 +157,9 @@ static async Task TriggerMarkedJobsAsync(WebApplication app)
         foreach (var (name, task) in jTasks)
         {
             if (task.IsCompletedSuccessfully)
-                logger.LogInformation("Task {name} completed successfully", name);
+                logger.LogInformation("Task {name} triggered successfully", name);
             else if (task.IsFaulted)
-                logger.LogWarning(task.Exception, "Task {name} completed with exception", name);
-            else if (task.IsCanceled)
-                logger.LogWarning("Task {name} cancelled", name);
+                logger.LogWarning(task.Exception, "Task {name} triggered with exception", name);
         }
     }
     catch (Exception e)
