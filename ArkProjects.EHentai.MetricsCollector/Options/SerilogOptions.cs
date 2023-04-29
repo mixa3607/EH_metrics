@@ -1,5 +1,3 @@
-using Serilog.Events;
-
 namespace ArkProjects.EHentai.MetricsCollector.Options;
 
 public class SerilogOptions
@@ -8,8 +6,6 @@ public class SerilogOptions
     public bool DisableElastic { get; set; }
     public string? ElasticIndexPrefix { get; set; }
     public SerilogOptionsLevelPresetType LevelPreset { get; set; } = SerilogOptionsLevelPresetType.Prod;
-    public bool EnableRequestLogging { get; set; }
-    public LogEventLevel RequestLogMessageLevel { get; set; } = LogEventLevel.Debug;
 
     public enum SerilogOptionsLevelPresetType : byte
     {

@@ -1,4 +1,3 @@
-
 using System.Dynamic;
 using Prometheus;
 using Quartz;
@@ -9,11 +8,9 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
-using System.Buffers;
-using System.Net.Mime;
-using System.Text;
 using ArkProjects.EHentai.MetricsCollector.Services;
-using Newtonsoft.Json;
+using System.Reflection;
+using Microsoft.Extensions.Options;
 
 Metrics.SuppressDefaultMetrics();
 
@@ -29,7 +26,7 @@ var serilogOptions = builder.Configuration.GetOptionsReflex<SerilogOptions>();
 builder.Host.UseSerilog((ctx, l) =>
 {
     Serilog.Debugging.SelfLog.Enable(Console.Error);
-    var assemblyName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name!.ToLower();
+    var assemblyName = Assembly.GetEntryAssembly()?.GetName().Name!.ToLower();
     l
         .Enrich.WithEnvironmentName()
         .Enrich.WithEnvironmentUserName()
@@ -115,102 +112,86 @@ builder.Services
 //#########################################################################
 
 var app = builder.Build();
-
-if (serilogOptions.EnableRequestLogging)
-{
-    const int inMemBuffLen = 50 * 1024;
-    const int maxLoggingBodyLen = 100 * 1024;
-
-    Console.WriteLine($"Request logging enabled with level {serilogOptions.RequestLogMessageLevel}");
-    app.Use((context, next) =>
-    {
-        context.Request.EnableBuffering(inMemBuffLen);
-        return next();
-    });
-
-    app.UseSerilogRequestLogging(o =>
-    {
-        o.GetLevel = (httpContext, elapsed, ex) => serilogOptions.RequestLogMessageLevel;
-        o.EnrichDiagnosticContext = (diagnosticContext, context) =>
-        {
-            var bodyStr = (string?)null;
-            var body = (dynamic?)null;
-            if (context.Request.ContentType == MediaTypeNames.Application.Json)
-            {
-                var blob = MemoryPool<byte>.Shared.Rent(maxLoggingBodyLen).Memory[..(maxLoggingBodyLen)];
-
-                var origPos = context.Request.Body.Position;
-                context.Request.Body.Position = 0;
-                var read = context.Request.Body.ReadAsync(blob, CancellationToken.None).Result;
-                bodyStr = Encoding.UTF8.GetString(blob[..read].Span);
-                context.Request.Body.Position = origPos;
-                if (context.Request.Body.Length > maxLoggingBodyLen)
-                {
-                    body = $"Body len more than {maxLoggingBodyLen}. Cant deserialize";
-                }
-                else
-                {
-                    try
-                    {
-                        body = JsonConvert.DeserializeObject<ExpandoObject?>(bodyStr);
-                    }
-                    catch (Exception e)
-                    {
-                        body = e.ToString();
-                    }
-                }
-            }
-
-            var request = new
-            {
-                IpAddress = context.Connection.RemoteIpAddress?.ToString(),
-                Host = context.Request.Host.ToString(),
-                Path = context.Request.Path.ToString(),
-                IsHttps = context.Request.IsHttps,
-                Scheme = context.Request.Scheme,
-                Method = context.Request.Method,
-                ContentType = context.Request.ContentType,
-                Protocol = context.Request.Protocol,
-                QueryString = context.Request.QueryString.ToString(),
-                Query = context.Request.Query.ToDictionary(x => x.Key, y => y.Value.ToString()),
-                Headers = context.Request.Headers.ToDictionary(x => x.Key, y => y.Value.ToString()),
-                Cookies = context.Request.Cookies.ToDictionary(x => x.Key, y => y.Value.ToString()),
-                BodyString = bodyStr,
-                Body = body,
-            };
-            diagnosticContext.Set("Request", request, true);
-        };
-    });
-}
-else
-{
-    Console.WriteLine($"Request logging disabled");
-}
-
-
 app.MapMetrics();
 
 //#########################################################################
 
-app.Services.GetRequiredService<ISchedulerFactory>().GetScheduler().Result
-    .TriggerJob(new JobKey("home_overview_metrics", "metrics")).Wait();
-
-//var r = app.Services.GetRequiredService<EHentaiClientDi>().MyHome.GetOverviewAsync().Result;
+_ = LogVersionAndEnvAsync(app);
+_ = TriggerMarkedJobsAsync(app);
 await app.RunAsync();
 
 //#########################################################################
 
-void ConfigureScheduler(WebApplicationBuilder appBuilder)
+static void ConfigureScheduler(WebApplicationBuilder appBuilder)
 {
-    appBuilder.Configuration.GetOptionsReflex<ArkProjects.EHentai.MetricsCollector.Options.QuartzOptions>(out var options);
-
-    appBuilder.Services.AddQuartz(x =>
-    {
-        x.UseMicrosoftDependencyInjectionJobFactory();
-        foreach (var jobDef in options.Jobs.Values)
+    appBuilder.Services
+        .AddAndGetOptionsReflex<AppQuartzOptions>(appBuilder.Configuration, out var options)
+        .AddQuartzServer(x => x.WaitForJobsToComplete = true)
+        .AddQuartz(x =>
         {
-            x.AddCronJob(jobDef);
+            x.UseMicrosoftDependencyInjectionJobFactory();
+            foreach (var jobDef in options.Jobs.Values)
+            {
+                x.AddCronJob(jobDef);
+            }
+        });
+}
+
+static async Task TriggerMarkedJobsAsync(WebApplication app)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var options = app.Services.GetRequiredService<IOptions<AppQuartzOptions>>().Value;
+        var scheduler = await app.Services.GetRequiredService<ISchedulerFactory>().GetScheduler();
+
+        var jTasks = new Dictionary<string, Task>();
+        foreach (var (name, def) in options.Jobs.Where(x => x.Value.TriggerOnStartup))
+        {
+            logger.LogInformation("Trigger {name}({def_name}) job", name, def.Name);
+            jTasks.Add(name, scheduler.TriggerJob(new JobKey(def.Name!, def.Group)));
         }
-    });
-    appBuilder.Services.AddQuartzServer(x => x.WaitForJobsToComplete = true);
+
+        await Task.WhenAll(jTasks.Values);
+        foreach (var (name, task) in jTasks)
+        {
+            if (task.IsCompletedSuccessfully)
+                logger.LogInformation("Task {name} completed successfully", name);
+            else if (task.IsFaulted)
+                logger.LogWarning(task.Exception, "Task {name} completed with exception", name);
+            else if (task.IsCanceled)
+                logger.LogWarning("Task {name} cancelled", name);
+        }
+    }
+    catch (Exception e)
+    {
+        logger.LogError(e, "Error on triggering jobs on startup");
+    }
+}
+
+static Task LogVersionAndEnvAsync(WebApplication app)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var assembly = Assembly.GetEntryAssembly();
+        var versionAttr = assembly?.GetCustomAttribute<AssemblyFileVersionAttribute>();
+        var attrs = assembly?.GetCustomAttributes<AssemblyMetadataAttribute>().ToArray();
+        var gitCommitSha = attrs?.FirstOrDefault(x => x.Key == "GIT_COMMIT_SHA")?.Value;
+        var buildDate = attrs?.FirstOrDefault(x => x.Key == "BUILD_DATE")?.Value;
+        var gitRefType = attrs?.FirstOrDefault(x => x.Key == "GIT_REF_TYPE")?.Value;
+        var gitRef = attrs?.FirstOrDefault(x => x.Key == "GIT_REF")?.Value;
+
+        logger.LogInformation("Application: {app}", app.Environment.ApplicationName);
+        logger.LogInformation("Environment: {env}", app.Environment.EnvironmentName);
+        logger.LogInformation("BuildDate: {build_date}", buildDate);
+        logger.LogInformation("Version: {ver}", versionAttr?.Version);
+        logger.LogInformation("[GIT] RefType: {ref_type}, Ref: {ref}, Sha: {sha}", gitRefType, gitRef, gitCommitSha);
+    }
+    catch (Exception e)
+    {
+        logger.LogError(e, "Error on resolving app version");
+    }
+
+    return Task.CompletedTask;
 }

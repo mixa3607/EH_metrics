@@ -35,7 +35,6 @@ public class CollectHomeOverviewMetricsJob : IJob
         using (apiPerfHist.WithLabels("home.overview").NewTimer())
             resp = await _client.MyHome.GetOverviewAsync(context.CancellationToken);
 
-
         //eht
         {
             metricsFac
