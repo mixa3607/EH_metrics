@@ -25,7 +25,7 @@ public class CollectHomeOverviewMetricsJob : IJob
     {
         _logger.LogDebug("Begin collect home overview metrics");
         var resp = await _client.MyHome.GetOverviewAsync(context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.Body);
+        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
         _metricsCollector.SetOverview(resp.Body!);
     }
 }

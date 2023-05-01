@@ -4,7 +4,7 @@ namespace ArkProjects.EHentai.MetricsCollector.Services;
 
 public class EHentaiClientOptionsDi
 {
-    public const string SectionName = "EClient";
+    public const string SectionName = "EhClient";
     public string? SessionId { get; set; }
     public string? PassHash { get; set; }
     public string? MemberId { get; set; }

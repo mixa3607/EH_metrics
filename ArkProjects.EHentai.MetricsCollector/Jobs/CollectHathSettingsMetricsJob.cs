@@ -30,7 +30,7 @@ public class CollectHathSettingsMetricsJob : IJob
             {
                 _logger.LogInformation("Begin collect hath settings metrics for id {clientId}", clientId);
                 var resp = await _client.MyHome.GetHathSettingsAsync(clientId, context.CancellationToken);
-                _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.Body);
+                _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
                 _metricsCollector.SetClientSettings(resp.Body!);
             }
             catch (Exception e)

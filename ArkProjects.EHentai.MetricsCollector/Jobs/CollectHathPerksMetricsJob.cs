@@ -25,7 +25,7 @@ public class CollectHathPerksMetricsJob : IJob
     {
         _logger.LogDebug("Begin collect hath perks metrics");
         var resp = await _client.MyHome.GetHathPerksAsync(context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.HathPerks", resp.Body);
+        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.HathPerks", resp.RawStringBody);
         _metricsCollector.SetHathPerks(resp.Body!);
     }
 }
