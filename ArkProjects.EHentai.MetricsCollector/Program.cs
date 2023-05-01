@@ -11,8 +11,8 @@ using Serilog.Sinks.Elasticsearch;
 using ArkProjects.EHentai.MetricsCollector.Services;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using Quartz.Impl.Matchers;
 
-Metrics.SuppressDefaultMetrics();
 
 //#########################################################################
 
@@ -45,7 +45,7 @@ builder.Host.UseSerilog((ctx, l) =>
 
     if (!serilogOptions.DisableElastic)
     {
-        var indexFormat = $"serilogs-sink-8.4.1-{assemblyName}-{{0:yyyy.MM.dd}}";
+        var indexFormat = $"serilogs-{assemblyName}-{{0:yyyy.MM.dd}}";
         if (serilogOptions.ElasticIndexPrefix != null)
             indexFormat = $"{serilogOptions.ElasticIndexPrefix}-{indexFormat}";
 
@@ -53,7 +53,6 @@ builder.Host.UseSerilog((ctx, l) =>
         var options = new ElasticsearchSinkOptions(serilogOptions.ElasticUris)
         {
             AutoRegisterTemplate = true,
-            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
             FailureCallback = e =>
                 Console.WriteLine($"Unable to submit event template {e.MessageTemplate} with error {e.Exception}"),
             EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
@@ -63,7 +62,6 @@ builder.Host.UseSerilog((ctx, l) =>
             NumberOfShards = 1,
             NumberOfReplicas = 0,
             IndexFormat = indexFormat,
-            DeadLetterIndexName = "deadletter-" + indexFormat,
             BufferLogShippingInterval = TimeSpan.FromSeconds(5),
             TemplateCustomSettings = new Dictionary<string, string>()
             {
@@ -98,6 +96,13 @@ builder.Host.UseSerilog((ctx, l) =>
     }
 });
 
+//metrics
+Metrics.SuppressDefaultMetrics();
+builder.Services
+    .AddAndGetOptionsReflex<MetricsCollectorOptions>(builder.Configuration, out _)
+    .AddSingleton<MetricsCollectorService>()
+    ;
+
 //quartz
 ConfigureScheduler(builder);
 
@@ -105,7 +110,6 @@ ConfigureScheduler(builder);
 builder.Services
     .AddAndGetOptionsReflex<EHentaiClientOptionsDi>(builder.Configuration, out _)
     .AddSingleton<EHentaiClientDi>()
-    .AddAndGetOptionsReflex<ExHentaiClientOptionsDi>(builder.Configuration, out _)
     .AddSingleton<ExHentaiClientDi>()
     ;
 
@@ -131,6 +135,7 @@ static void ConfigureScheduler(WebApplicationBuilder appBuilder)
         .AddQuartz(x =>
         {
             x.UseMicrosoftDependencyInjectionJobFactory();
+            x.AddJobListener<QuartzLoggingJobListener>(GroupMatcher<JobKey>.AnyGroup());
             foreach (var jobDef in options.Jobs.Values)
             {
                 x.AddCronJob(jobDef);
@@ -147,7 +152,7 @@ static async Task TriggerMarkedJobsAsync(WebApplication app)
         var scheduler = await app.Services.GetRequiredService<ISchedulerFactory>().GetScheduler();
 
         var jTasks = new Dictionary<string, Task>();
-        foreach (var (name, def) in options.Jobs.Where(x => x.Value.TriggerOnStartup))
+        foreach (var (name, def) in options.Jobs.Where(x => x.Value.TriggerOnStartup && x.Value.Enable))
         {
             logger.LogInformation("Trigger {name}({def_name}) job", name, def.Name);
             jTasks.Add(name, scheduler.TriggerJob(new JobKey(def.Name!, def.Group)));
