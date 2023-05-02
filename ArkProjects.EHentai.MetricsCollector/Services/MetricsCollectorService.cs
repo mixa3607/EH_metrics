@@ -194,6 +194,16 @@ public class MetricsCollectorService
                 }
             },
         };
+        //var sb = new System.Text.StringBuilder();
+        //foreach (var def in defs)
+        //{
+        //    sb.AppendLine(def.Key);
+        //    sb.AppendLine("|Name|Desc|Labels|Type|");
+        //    sb.AppendLine("|----|----|------|----|");
+        //    sb.AppendJoin("", def.Value.Select(x => $"|{x.Name}|{x.Description}|{string.Join(", ", x.Labels)}|{x.Type.Name}|\n"));
+        //}
+        //var s = sb.ToString();
+
         _collectors = defs.SelectMany(x => x.Value).ToDictionary(x => x.Name, x => (x, (object?)null));
 
         _metricFactory = Metrics.WithLabels(new Dictionary<string, string>()

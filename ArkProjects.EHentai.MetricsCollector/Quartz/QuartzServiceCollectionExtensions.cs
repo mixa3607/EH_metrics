@@ -20,7 +20,10 @@ public static class QuartzServiceCollectionExtensions
 
         var jobType = AppDomain.CurrentDomain.GetAssemblies()
             .Select(assembly => assembly.GetType(jobDefinition.JobType))
-            .First(tt => tt != null)!;
+            .FirstOrDefault(tt => tt != null)!;
+        jobType ??= AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.DefinedTypes)
+            .First(tt => tt.Name == jobDefinition.JobType)!;
 
         quartzConfigurator.AddJob(jobType, jobKey, c=>c
             .WithDescription(jobDefinition.Description)
