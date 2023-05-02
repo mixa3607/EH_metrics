@@ -210,13 +210,16 @@ public class MetricsCollectorService
 
     public void SetHathPerks(HathPerksResponse resp)
     {
-        GetLifetimeGauge("eh_hath_balance_number", _options.HathPerksMetricsLifetime).WithLabels().Set(resp.Hath);
+        //GetLifetimeGauge("eh_hath_balance_number", _options.HathPerksMetricsLifetime).WithLabels().Set(resp.Hath);
+        GetGauge("eh_hath_balance_number").WithLabels().Set(resp.Hath);
     }
 
     public void SetOverview(OverviewResponse resp)
     {
+        //void Set(string name, double v, params string[] l) =>
+        //    GetLifetimeGauge(name, _options.HomeOverviewMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
-            GetLifetimeGauge(name, _options.HomeOverviewMetricsLifetime).WithLabels(l).Set(v);
+            GetGauge(name).WithLabels(l).Set(v);
 
         Set("eh_eht_uploaded_mb", resp.EhTracker.Uploaded);
         Set("eh_eht_downloaded_mb", resp.EhTracker.Downloaded);
@@ -234,16 +237,20 @@ public class MetricsCollectorService
 
     public void SetClientSettings(HathSettingsResponse resp)
     {
+        //void Set(string name, double v, params string[] l) =>
+        //    GetLifetimeGauge(name, _options.SettingsMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
-            GetLifetimeGauge(name, _options.SettingsMetricsLifetime).WithLabels(l).Set(v);
+            GetGauge(name).WithLabels(l).Set(v);
 
         Set("eh_hath_clients_ranges_number", resp.StaticRanges, resp.ClientId.ToString());
     }
 
     public void SetHathStatus(HathStatusResponse resp)
     {
+        //void Set(string name, double v, params string[] l) =>
+        //    GetLifetimeGauge(name, _options.HathStatusMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
-            GetLifetimeGauge(name, _options.HathStatusMetricsLifetime).WithLabels(l).Set(v);
+            GetGauge(name).WithLabels(l).Set(v);
 
         foreach (var hathRegionInfo in resp.Regions)
         {
