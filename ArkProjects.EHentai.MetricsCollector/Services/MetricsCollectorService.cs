@@ -279,8 +279,8 @@ public class MetricsCollectorService
     {
         if (!_collectors.TryGetValue(name, out var c))
             throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(ICollector<IGauge>))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+        //if (c.def.Type != typeof(ICollector<IGauge>))
+        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
         c.collector ??= _metricFactory.WithManagedLifetime(lifeTime)
             .CreateGauge(c.def.Name, c.def.Description, c.def.Labels).WithExtendLifetimeOnUse();
         return (ICollector<IGauge>)c.collector;
@@ -290,8 +290,8 @@ public class MetricsCollectorService
     {
         if (!_collectors.TryGetValue(name, out var c))
             throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(Gauge))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+        //if (c.def.Type != typeof(Gauge))
+        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
         c.collector ??= _metricFactory.CreateGauge(c.def.Name, c.def.Description, c.def.Labels);
         return (Gauge)c.collector;
     }
@@ -300,8 +300,8 @@ public class MetricsCollectorService
     {
         if (!_collectors.TryGetValue(name, out var c))
             throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(Histogram))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+        //if (c.def.Type != typeof(Histogram))
+        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
 
         c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels);
         return (Histogram)c.collector;
