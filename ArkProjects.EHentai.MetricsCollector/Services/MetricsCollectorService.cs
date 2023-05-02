@@ -277,31 +277,43 @@ public class MetricsCollectorService
 
     private Gauge GetGauge(string name)
     {
-        if (!_collectors.TryGetValue(name, out var c))
-            throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(Gauge))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-        c.collector ??= _metricFactory.CreateGauge(c.def.Name, c.def.Description, c.def.Labels);
-        return (Gauge)c.collector;
+        lock (this)
+        {
+            if (!_collectors.TryGetValue(name, out var c))
+                throw new Exception($"{name} collector not defined");
+            if (c.def.Type != typeof(Gauge))
+                throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+            c.collector ??= _metricFactory.CreateGauge(c.def.Name, c.def.Description, c.def.Labels);
+            return (Gauge)c.collector;
+        }
     }
 
     private Histogram GetHistogram(string name)
     {
-        if (!_collectors.TryGetValue(name, out var c))
-            throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(Histogram))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-        c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels);
-        return (Histogram)c.collector;
+        lock (this)
+        {
+            if (!_collectors.TryGetValue(name, out var c))
+                throw new Exception($"{name} collector not defined");
+            if (c.def.Type != typeof(Histogram))
+                throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+            c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels, new HistogramConfiguration()
+            {
+                SuppressInitialValue = false
+            });
+            return (Histogram)c.collector;
+        }
     }
 
     private Counter GetCounter(string name)
     {
-        if (!_collectors.TryGetValue(name, out var c))
-            throw new Exception($"{name} collector not defined");
-        if (c.def.Type != typeof(Histogram))
-            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-        c.collector ??= _metricFactory.CreateCounter(c.def.Name, c.def.Description, c.def.Labels);
-        return (Counter)c.collector;
+        lock (this)
+        {
+            if (!_collectors.TryGetValue(name, out var c))
+                throw new Exception($"{name} collector not defined");
+            if (c.def.Type != typeof(Counter))
+                throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+            c.collector ??= _metricFactory.CreateCounter(c.def.Name, c.def.Description, c.def.Labels);
+            return (Counter)c.collector;
+        }
     }
 }
