@@ -134,49 +134,49 @@ public class MetricsCollectorService
                     new()
                     {
                         Name = "eh_hath_clients_files_served_number",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client files served",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_max_speed_kbps",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client max kb/s",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_trust_number",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client trust",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_quality_number",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client quality",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_hitrate_number",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client hits per minute",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_hathrate_number",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client hath per day",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_status_enum",
-                        Labels = new[] { "client_name", "client_id", "client_ip" },
+                        Labels = new[] { "client_name", "client_id" },
                         Description = "E-Hentai H@H client status",
                         Type = typeof(Gauge),
                     },
@@ -264,7 +264,7 @@ public class MetricsCollectorService
 
         foreach (var clientInfo in resp.Clients)
         {
-            var labels = new[] { clientInfo.Name!, clientInfo.Id.ToString(), clientInfo.ClientIp! };
+            var labels = new[] { clientInfo.Name!, clientInfo.Id.ToString() };
             Set("eh_hath_clients_files_served_number", clientInfo.FilesServed, labels);
             Set("eh_hath_clients_max_speed_kbps", clientInfo.MaxSpeed, labels);
             Set("eh_hath_clients_trust_number", clientInfo.Trust, labels);
@@ -296,10 +296,11 @@ public class MetricsCollectorService
                 throw new Exception($"{name} collector not defined");
             if (c.def.Type != typeof(Histogram))
                 throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-            c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels, new HistogramConfiguration()
-            {
-                SuppressInitialValue = false
-            });
+            c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels,
+                new HistogramConfiguration()
+                {
+                    SuppressInitialValue = false
+                });
             return (Histogram)c.collector;
         }
     }

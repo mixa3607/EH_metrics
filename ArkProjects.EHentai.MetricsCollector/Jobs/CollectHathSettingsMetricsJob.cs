@@ -25,7 +25,7 @@ public class CollectHathSettingsMetricsJob : IJob
             throw new Exception("Job data ClientId(number) must be set");
         _logger.LogInformation("Begin collect hath settings metrics for id {clientId}", clientId);
         var resp = await _client.MyHome.GetHathSettingsAsync(clientId, context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
+        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.HathSettings", resp.RawStringBody);
         _metricsCollector.SetClientSettings(resp.Body!);
     }
 }

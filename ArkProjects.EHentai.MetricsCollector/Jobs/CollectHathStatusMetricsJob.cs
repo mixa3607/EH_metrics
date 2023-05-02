@@ -22,7 +22,7 @@ public class CollectHathStatusMetricsJob : IJob
     {
         _logger.LogDebug("Begin collect hath status metrics");
         var resp = await _client.MyHome.GetHathStatusAsync(context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
+        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.HathStatus", resp.RawStringBody);
         _metricsCollector.SetHathStatus(resp.Body!);
     }
 }
