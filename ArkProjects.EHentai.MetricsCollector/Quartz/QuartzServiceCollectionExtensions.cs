@@ -25,6 +25,7 @@ public static class QuartzServiceCollectionExtensions
         quartzConfigurator.AddJob(jobType, jobKey, c=>c
             .WithDescription(jobDefinition.Description)
             .DisallowConcurrentExecution(jobDefinition.ConcurrentExecutionDisallowed)
+            .SetJobData(new JobDataMap(jobDefinition.JobData))
         );
         quartzConfigurator.AddTrigger(c => c
             .ForJob(jobKey)

@@ -10,4 +10,5 @@ public class QuartzCronJobDefinition
     public string? JobType { get; set; }
     public string? CronExpression { get; set; }
     public bool ConcurrentExecutionDisallowed { get; set; }
+    public Dictionary<string, string?> JobData { get; set; } = new();
 }

@@ -38,6 +38,12 @@ public class MetricsCollectorService
                         Description = "Scheduled job execution run time in seconds",
                         Type = typeof(Histogram),
                     },
+                    new()
+                    {
+                        Name = "eh_job_failures_number", Labels = new[] { "name" },
+                        Description = "Scheduled job execution errors",
+                        Type = typeof(Counter),
+                    },
                 }
             },
             {
@@ -47,7 +53,7 @@ public class MetricsCollectorService
                     {
                         Name = "eh_hath_balance_number", Labels = Array.Empty<string>(),
                         Description = "E-Hentai current hath balance",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                 }
             },
@@ -58,37 +64,37 @@ public class MetricsCollectorService
                     {
                         Name = "eh_eht_uploaded_mb", Labels = Array.Empty<string>(),
                         Description = "E-Hentai EHTracker uploaded megabytes",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_eht_downloaded_mb", Labels = Array.Empty<string>(),
                         Description = "E-Hentai EHTracker downloaded megabytes",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_eht_seed_minutes", Labels = Array.Empty<string>(),
                         Description = "E-Hentai EHTracker seeding minutes",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_eht_completes_number", Labels = new[] { "type" },
                         Description = "E-Hentai EHTracker completes",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_eht_up_down_ratio", Labels = Array.Empty<string>(),
                         Description = "E-Hentai EHTracker up/down ratio",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_gp_gained_number", Labels = new[] { "type" },
                         Description = "E-Hentai Total GP Gained from",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                 }
             },
@@ -99,80 +105,80 @@ public class MetricsCollectorService
                     {
                         Name = "eh_hath_regions_netload_mbps", Labels = new[] { "region" },
                         Description = "E-Hentai H@H current network load",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_regions_miss_percent", Labels = new[] { "region" },
                         Description = "E-Hentai H@H current miss %",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_regions_coverage_percent", Labels = new[] { "region" },
                         Description = "E-Hentai H@H coverage",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_regions_hits_per_gb_ratio", Labels = new[] { "region" },
                         Description = "E-Hentai H@H Hits/GB ratio",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_regions_quality_number", Labels = new[] { "region" },
                         Description = "E-Hentai H@H quality",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_files_served_number",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client files served",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_max_speed_kbps",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client max kb/s",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_trust_number",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client trust",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_quality_number",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client quality",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_hitrate_number",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client hits per minute",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_hathrate_number",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client hath per day",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                     new()
                     {
                         Name = "eh_hath_clients_status_enum",
                         Labels = new[] { "client_name", "client_id", "client_ip" },
                         Description = "E-Hentai H@H client status",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                 }
             },
@@ -183,7 +189,7 @@ public class MetricsCollectorService
                     {
                         Name = "eh_hath_clients_ranges_number", Labels = new[] { "client_id" },
                         Description = "E-Hentai H@H client static ranges",
-                        Type = typeof(ICollector<IGauge>),
+                        Type = typeof(Gauge),
                     },
                 }
             },
@@ -205,19 +211,17 @@ public class MetricsCollectorService
             jobFullName, jobContext.JobRunTime, jobContext.RefireCount);
 
         GetHistogram("eh_job_run_time_seconds").WithLabels(jobFullName).Observe(jobContext.JobRunTime.Seconds);
+        GetCounter("eh_job_failures_number").WithLabels(jobFullName).Inc(ex == null ? 0 : 1);
     }
 
 
     public void SetHathPerks(HathPerksResponse resp)
     {
-        //GetLifetimeGauge("eh_hath_balance_number", _options.HathPerksMetricsLifetime).WithLabels().Set(resp.Hath);
         GetGauge("eh_hath_balance_number").WithLabels().Set(resp.Hath);
     }
 
     public void SetOverview(OverviewResponse resp)
     {
-        //void Set(string name, double v, params string[] l) =>
-        //    GetLifetimeGauge(name, _options.HomeOverviewMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
             GetGauge(name).WithLabels(l).Set(v);
 
@@ -237,8 +241,6 @@ public class MetricsCollectorService
 
     public void SetClientSettings(HathSettingsResponse resp)
     {
-        //void Set(string name, double v, params string[] l) =>
-        //    GetLifetimeGauge(name, _options.SettingsMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
             GetGauge(name).WithLabels(l).Set(v);
 
@@ -247,8 +249,6 @@ public class MetricsCollectorService
 
     public void SetHathStatus(HathStatusResponse resp)
     {
-        //void Set(string name, double v, params string[] l) =>
-        //    GetLifetimeGauge(name, _options.HathStatusMetricsLifetime).WithLabels(l).Set(v);
         void Set(string name, double v, params string[] l) =>
             GetGauge(name).WithLabels(l).Set(v);
 
@@ -275,23 +275,12 @@ public class MetricsCollectorService
         }
     }
 
-    private ICollector<IGauge> GetLifetimeGauge(string name, TimeSpan lifeTime)
-    {
-        if (!_collectors.TryGetValue(name, out var c))
-            throw new Exception($"{name} collector not defined");
-        //if (c.def.Type != typeof(ICollector<IGauge>))
-        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-        c.collector ??= _metricFactory.WithManagedLifetime(lifeTime)
-            .CreateGauge(c.def.Name, c.def.Description, c.def.Labels).WithExtendLifetimeOnUse();
-        return (ICollector<IGauge>)c.collector;
-    }
-
     private Gauge GetGauge(string name)
     {
         if (!_collectors.TryGetValue(name, out var c))
             throw new Exception($"{name} collector not defined");
-        //if (c.def.Type != typeof(Gauge))
-        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+        if (c.def.Type != typeof(Gauge))
+            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
         c.collector ??= _metricFactory.CreateGauge(c.def.Name, c.def.Description, c.def.Labels);
         return (Gauge)c.collector;
     }
@@ -300,10 +289,19 @@ public class MetricsCollectorService
     {
         if (!_collectors.TryGetValue(name, out var c))
             throw new Exception($"{name} collector not defined");
-        //if (c.def.Type != typeof(Histogram))
-        //    throw new Exception($"{name} collector must be {c.def.Type.FullName}");
-
+        if (c.def.Type != typeof(Histogram))
+            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
         c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels);
         return (Histogram)c.collector;
+    }
+
+    private Counter GetCounter(string name)
+    {
+        if (!_collectors.TryGetValue(name, out var c))
+            throw new Exception($"{name} collector not defined");
+        if (c.def.Type != typeof(Histogram))
+            throw new Exception($"{name} collector must be {c.def.Type.FullName}");
+        c.collector ??= _metricFactory.CreateCounter(c.def.Name, c.def.Description, c.def.Labels);
+        return (Counter)c.collector;
     }
 }

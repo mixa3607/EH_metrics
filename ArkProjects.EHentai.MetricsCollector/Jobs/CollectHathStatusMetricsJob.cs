@@ -1,5 +1,4 @@
-﻿using ArkProjects.EHentai.MetricsCollector.Options;
-using ArkProjects.EHentai.MetricsCollector.Services;
+﻿using ArkProjects.EHentai.MetricsCollector.Services;
 using Quartz;
 
 namespace ArkProjects.EHentai.MetricsCollector.Jobs;
@@ -10,15 +9,13 @@ public class CollectHathStatusMetricsJob : IJob
     private readonly ILogger<CollectHathStatusMetricsJob> _logger;
     private readonly MetricsCollectorService _metricsCollector;
     private readonly EHentaiClientDi _client;
-    private readonly CollectHathStatusMetricsJobOptions _options;
 
     public CollectHathStatusMetricsJob(EHentaiClientDi client, ILogger<CollectHathStatusMetricsJob> logger,
-        IConfiguration cfg, MetricsCollectorService metricsCollector)
+        MetricsCollectorService metricsCollector)
     {
         _client = client;
         _logger = logger;
         _metricsCollector = metricsCollector;
-        cfg.GetOptionsReflex(out _options);
     }
 
     public async Task Execute(IJobExecutionContext context)
