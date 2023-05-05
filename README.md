@@ -11,7 +11,7 @@ This soft periodically checks the specified e-hentai pages and extracts metrics 
 
 ## Config
 Required site client settings `EhClient{}`:
-```json
+```js
 {
   "MemberId": "9965000",                            //* ipb_member_id cookie
   "PassHash": "bbc23afa07096d2f700b1d48c1ba777f",   //* ipb_pass_hash cookie
@@ -20,7 +20,7 @@ Required site client settings `EhClient{}`:
 ```
 
 Logging. By default YOU CAN SKIP this section but may fill `Serilog{}`:
-```json
+```js
 {
   "LevelPreset": "dev",                         // dev/prod switch verbosity
   "DisableElastic": false,                      // set false if you use elastic logging
@@ -29,7 +29,7 @@ Logging. By default YOU CAN SKIP this section but may fill `Serilog{}`:
 ```
 
 Every job deined with json in `AppQuartz{} => Jobs[]`:
-```json
+```js
 {
   "Enable": true,                             //* enable/disable job
   "TriggerOnStartup": true,                   //  execute on service start if enabled
