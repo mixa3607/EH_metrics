@@ -117,3 +117,4 @@ Site page: /home.php
 
 ### Grafana sample dashboard
 ![grafana](./grafana1.png)
+\* `Real clients` graphs filled with metrics from [modified H@H client](https://github.com/mixa3607/EH_hath)
