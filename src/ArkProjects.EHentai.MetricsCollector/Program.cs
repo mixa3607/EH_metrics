@@ -2,7 +2,6 @@ using System.Dynamic;
 using Prometheus;
 using Quartz;
 using ArkProjects.EHentai.MetricsCollector.Quartz;
-using ArkProjects.EHentai.MetricsCollector.Options;
 using Serilog;
 using Serilog.Exceptions;
 using ArkProjects.EHentai.MetricsCollector.Services;
