@@ -29,6 +29,6 @@ LABEL image.git.ref_type=$GIT_REF_TYPE
 LABEL image.git.commit_sha=GIT_COMMIT_SHA
 LABEL image.project_url=$PROJECT_URL
 LABEL image.repo_url=$REPO_URL
-COPY --from=build_server /out /app
+COPY --from=build_server /out /homes/app
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "ArkProjects.EHentai.MetricsCollector.dll"]
