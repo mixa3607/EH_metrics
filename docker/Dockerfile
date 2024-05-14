@@ -14,7 +14,7 @@ ENV REPO_URL=$REPO_URL
 ENV REPO=$REPO
 RUN dotnet restore
 RUN dotnet build -c Release --no-restore
-RUN dotnet publish -c Release --no-build -o /out
+RUN dotnet publish -c Release --no-build -o /out ArkProjects.EHentai.MetricsCollector
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS app
