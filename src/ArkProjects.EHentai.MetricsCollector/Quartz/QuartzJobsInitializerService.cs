@@ -1,4 +1,3 @@
-using ArkProjects.EHentai.MetricsCollector.Options;
 using Microsoft.Extensions.Options;
 using Quartz;
 

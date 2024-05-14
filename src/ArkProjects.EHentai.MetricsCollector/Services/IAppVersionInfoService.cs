@@ -1,3 +1,5 @@
+namespace ArkProjects.EHentai.MetricsCollector.Services;
+
 public interface IAppVersionInfoService
 {
     string? BuildDate { get; }

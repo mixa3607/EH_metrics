@@ -1,6 +1,4 @@
-using ArkProjects.EHentai.MetricsCollector.Quartz;
-
-namespace ArkProjects.EHentai.MetricsCollector.Options;
+namespace ArkProjects.EHentai.MetricsCollector.Quartz;
 
 public class AppQuartzOptions
 {

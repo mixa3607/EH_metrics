@@ -1,10 +1,10 @@
 services:
   eh-metrics:
-    image: ghcr.io/mixa3607/eh_metrics:${IMAGE_TAG-master}
+    image: ghcr.io/mixa3607/eh_metrics:v1.0.0
     environment:
-      - ASPNETCORE_ENVIRONMENT=$ENVIRONMENT
+      - ASPNETCORE_ENVIRONMENT=Production
     volumes:
-      - ./appsettings.${ENVIRONMENT}.json:/app/appsettings.${ENVIRONMENT}.json:ro
+      - ./appsettings.json:/homes/app/appsettings.Production.json:ro
     ports:
-      - $PORT:8080
+      - 80:8080
     restart: unless-stopped

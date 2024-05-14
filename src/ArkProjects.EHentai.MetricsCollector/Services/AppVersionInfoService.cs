@@ -1,5 +1,7 @@
 using System.Reflection;
 
+namespace ArkProjects.EHentai.MetricsCollector.Services;
+
 public class AppVersionInfoService : IAppVersionInfoService
 {
     private readonly ILogger<AppVersionInfoService> _logger;

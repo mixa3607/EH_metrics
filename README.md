@@ -9,6 +9,21 @@ This soft periodically checks the specified e-hentai pages and extracts metrics 
 
 > Docker-Compose example located in [docker-compose.example](./docker-compose.example)
 
+Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/snapshot/iXowOeW8TVsZKV1NtEYxFMAtoOK32Asw) and [json schema](/EH-1715718683526.json)
+
+## Changelog
+
+### v1.0.0 - Fixes/updates/features
+- changes in jobs configuration (array[] => dictionary{}, many jobs enabled by default)
+- fix metrics (`eh_hath_regions_miss_percent` => `eh_hath_regions_hits_per_second_ratio`)
+- add new versions checker
+- update to dotnet 8
+- now container is rootless (port changed 80 => 8080)
+- add prometheus schema
+
+### v0.1.0 - First release
+- initial release
+
 ## Config
 Required site client settings `EhClient{}`:
 ```js
@@ -19,21 +34,11 @@ Required site client settings `EhClient{}`:
 }
 ```
 
-Logging. By default YOU CAN SKIP this section but may fill `Serilog{}`:
+Every job defined with json in `AppQuartz{} => Jobs{<name>:{<info>}}`:
 ```js
-{
-  "LevelPreset": "dev",                         // dev/prod switch verbosity
-  "DisableElastic": false,                      // set false if you use elastic logging
-  "ElasticUris": [ "https://es-node1.space" ]   // elastic nodes addrs
-}
-```
-
-Every job deined with json in `AppQuartz{} => Jobs[]`:
-```js
-{
+hath_settings_metrics_45044: {                //* unique name
   "Enable": true,                             //* enable/disable job
   "TriggerOnStartup": true,                   //  execute on service start if enabled
-  "Name": "hath_settings_metrics-45044",      //* unique name
   "Group": "eh",                              //* jobs group
   "CronExpression": "0 */10 * ? * *",         //* schedule in cron format (ex. every 10 minutes)
   "JobType": "CollectHathSettingsMetricsJob", //* job type
@@ -41,12 +46,14 @@ Every job deined with json in `AppQuartz{} => Jobs[]`:
 }
 ```
 
-
 ## Allowed jobs
 - [HathStatus](#CollectHathStatusMetricsJob)
 - [HathSettings](#CollectHathSettingsMetricsJob)
 - [HathPerks](#CollectHathPerksMetricsJob)
 - [HomeOverview](#CollectHomeOverviewMetricsJob)
+- [CheckNewReleases](#CheckNewReleasesJob)
+
+### See default config at [appsettings.json](/src/appsettings.json)
 
 ### Collect`HathStatus`MetricsJob
 ```
@@ -57,7 +64,7 @@ Site page: /hentaiathome.php
 |Name|Desc|Labels|Type|
 |----|----|------|----|
 |eh_hath_regions_netload_mbps|E-Hentai H@H current network load|region|Gauge|
-|eh_hath_regions_miss_percent|E-Hentai H@H current miss %|region|Gauge|
+|eh_hath_regions_hits_per_second_ratio|E-Hentai H@H current hits per second|region|Gauge|
 |eh_hath_regions_coverage_percent|E-Hentai H@H coverage|region|Gauge|
 |eh_hath_regions_hits_per_gb_ratio|E-Hentai H@H Hits/GB ratio|region|Gauge|
 |eh_hath_regions_quality_number|E-Hentai H@H quality|region|Gauge|
@@ -106,6 +113,16 @@ Site page: /home.php
 |eh_eht_completes_number|E-Hentai EHTracker completes|type|Gauge|
 |eh_eht_up_down_ratio|E-Hentai EHTracker up/down ratio||Gauge|
 |eh_gp_gained_number|E-Hentai Total GP Gained from|type|Gauge|
+
+### `CheckNewReleases`Job
+```
+  JobType: CheckNewReleasesJob
+  JobData: -
+```
+
+|Name|Desc|Labels|Type|
+|----|----|------|----|
+|eh_app_version_state|Version check status. 0 - unknown, 1 - latest, 2 - outdated||Gauge|
 
 
 ## Scrapper metrics
