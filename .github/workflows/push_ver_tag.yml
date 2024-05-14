@@ -5,8 +5,6 @@ on:
       - v*
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository.toLowerCase() }}
-  IMAGE_TAG: ${{ github.ref_name.toLowerCase() }}
   GIT_REF: ${{ github.ref_name }}
   GIT_REF_TYPE: ${{ github.ref_type }}
   GIT_COMMIT_SHA: ${{ github.sha }}
@@ -20,6 +18,13 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: env vars
+        run: |
+          echo "IMAGE_NAME=${REPO,,}"             >> ${GITHUB_ENV}
+          echo "IMAGE_TAG=${GIT_REF,,}"           >> ${GITHUB_ENV}
+        env:
+          GIT_REF: ${{ github.ref_name }}
+          REPO: "${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Log in to the Container registry
