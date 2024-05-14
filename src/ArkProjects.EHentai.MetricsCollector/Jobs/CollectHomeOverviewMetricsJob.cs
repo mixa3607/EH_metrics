@@ -3,7 +3,6 @@ using Quartz;
 
 namespace ArkProjects.EHentai.MetricsCollector.Jobs;
 
-[DisallowConcurrentExecution]
 public class CollectHomeOverviewMetricsJob : IJob
 {
     private readonly ILogger<CollectHomeOverviewMetricsJob> _logger;
@@ -22,7 +21,7 @@ public class CollectHomeOverviewMetricsJob : IJob
     {
         _logger.LogDebug("Begin collect home overview metrics");
         var resp = await _client.MyHome.GetOverviewAsync(context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
+        _logger.LogTrace("EH raw response: page {page}, html: {html}", "MyHome.Overview", resp.RawStringBody);
         _metricsCollector.SetOverview(resp.Body!);
     }
 }

@@ -1,12 +1,5 @@
 <Project>
 	<PropertyGroup>
-		<!--For manual nuget build you must export GIT_REF_TYPE=tag and GIT_REF=v<version> to env-->
-
-		<!--extract version from tag-->
-		<VERSION Condition="'$(VERSION)' == '' and '$(GIT_REF_TYPE)' == 'tag'">$([System.Text.RegularExpressions.Regex]::Match($(GIT_REF), 'v(?&lt;ver&gt;(\d+\.)*\d+)').Groups['ver'].Value)</VERSION>
-		<VERSION Condition="'$(VERSION)' == ''">0.0.0</VERSION>
-		<FULL_VERSION Condition="'$(FULL_VERSION)' == ''">$(VERSION)</FULL_VERSION>
-
 		<BUILD_DATE>$([System.DateTime]::Now.ToString())</BUILD_DATE>
 
 		<!--source link-->
@@ -14,13 +7,11 @@
 		<RepositoryUrl>$(REPO_URL)</RepositoryUrl>
 		<RepositoryBranch>$(GIT_REF)</RepositoryBranch>
 		<RepositoryCommit>$(GIT_COMMIT_SHA)</RepositoryCommit>
-		<PackageProjectUrl>$(PROJECT_URL)</PackageProjectUrl>
+	</PropertyGroup>
 
-		<!--versions-->
-		<AssemblyVersion>$(VERSION)</AssemblyVersion>
-		<FileVersion>$(VERSION)</FileVersion>
-		<Version>$(VERSION)</Version>
-		<PackageVersion>$(FULL_VERSION)</PackageVersion>
+	<!-- CI/CD build -->
+	<PropertyGroup Condition="'$(CI)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,6 +38,10 @@
 		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(REPO_URL)' != ''">
 			<_Parameter1>REPO_URL</_Parameter1>
 			<_Parameter2>$(REPO_URL)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(REPO)' != ''">
+			<_Parameter1>REPO</_Parameter1>
+			<_Parameter2>$(REPO)</_Parameter2>
 		</AssemblyAttribute>
 	</ItemGroup>
 </Project>

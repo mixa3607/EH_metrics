@@ -1,8 +1,8 @@
 services:
-  sdhub:
+  ehmetrics:
     image: ${REGISTRY-local}/${IMAGE_NAME-ehmetrics}:${IMAGE_TAG-latest}
     build:
-      context: ../
+      context: ../src
       network: host
       target: app
       dockerfile: ./docker/Dockerfile
@@ -12,3 +12,4 @@ services:
         - GIT_COMMIT_SHA
         - PROJECT_URL
         - REPO_URL
+        - REPO

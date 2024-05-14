@@ -1,5 +1,4 @@
 ﻿using ArkProjects.EHentai.Api.Models.Requests;
-using ArkProjects.EHentai.MetricsCollector.Options;
 using Microsoft.Extensions.Options;
 using Prometheus;
 using Quartz;
@@ -8,7 +7,6 @@ namespace ArkProjects.EHentai.MetricsCollector.Services;
 
 public class MetricsCollectorService
 {
-    private readonly MetricsCollectorOptions _options;
     private readonly ILogger<MetricsCollectorService> _logger;
     private readonly IMetricFactory _metricFactory;
     private readonly Dictionary<string, (MetricDef def, object? collector)> _collectors;
@@ -21,14 +19,23 @@ public class MetricsCollectorService
         public Type Type;
     }
 
-    public MetricsCollectorService(IOptions<MetricsCollectorOptions> options,
-        IOptions<EHentaiClientOptionsDi> ehOptions, ILogger<MetricsCollectorService> logger)
+    public MetricsCollectorService(IOptions<EHentaiClientOptionsDi> ehOptions, ILogger<MetricsCollectorService> logger)
     {
         _logger = logger;
-        _options = options.Value;
         var ehOptions1 = ehOptions.Value;
         var defs = new Dictionary<string, MetricDef[]>()
         {
+            {
+                "App", new MetricDef[]
+                {
+                    new()
+                    {
+                        Name = "eh_app_version_state", Labels = Array.Empty<string>(),
+                        Description = "Version check status. 0 - unknown, 1 - latest, 2 - outdated",
+                        Type = typeof(Gauge),
+                    },
+                }
+            },
             {
                 "Quartz", new MetricDef[]
                 {
@@ -109,8 +116,8 @@ public class MetricsCollectorService
                     },
                     new()
                     {
-                        Name = "eh_hath_regions_miss_percent", Labels = new[] { "region" },
-                        Description = "E-Hentai H@H current miss %",
+                        Name = "eh_hath_regions_hits_per_second_ratio", Labels = new[] { "region" },
+                        Description = "E-Hentai H@H current hits per second",
                         Type = typeof(Gauge),
                     },
                     new()
@@ -212,6 +219,11 @@ public class MetricsCollectorService
         });
     }
 
+    public void SetVersion(int status)
+    {
+        GetGauge("eh_app_version_state").Set(status);
+    }
+
     public void SetJobTime(IJobExecutionContext jobContext, Exception? ex)
     {
         var key = jobContext.JobDetail.Key;
@@ -266,7 +278,7 @@ public class MetricsCollectorService
         {
             var region = hathRegionInfo.Region.ToString();
             Set("eh_hath_regions_netload_mbps", hathRegionInfo.NetLoad, region);
-            Set("eh_hath_regions_miss_percent", hathRegionInfo.MissRate, region);
+            Set("eh_hath_regions_hits_per_second_ratio", hathRegionInfo.HitsPerSecond, region);
             Set("eh_hath_regions_coverage_percent", hathRegionInfo.Coverage, region);
             Set("eh_hath_regions_hits_per_gb_ratio", hathRegionInfo.HitsPerGb, region);
             Set("eh_hath_regions_quality_number", hathRegionInfo.Quality, region);

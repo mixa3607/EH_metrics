@@ -6,5 +6,5 @@ services:
     volumes:
       - ./appsettings.${ENVIRONMENT}.json:/app/appsettings.${ENVIRONMENT}.json:ro
     ports:
-      - $PORT:80
+      - $PORT:8080
     restart: unless-stopped

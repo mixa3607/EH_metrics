@@ -3,7 +3,6 @@ using Quartz;
 
 namespace ArkProjects.EHentai.MetricsCollector.Jobs;
 
-[DisallowConcurrentExecution]
 public class CollectHathPerksMetricsJob : IJob
 {
     private readonly ILogger<CollectHathPerksMetricsJob> _logger;
@@ -22,7 +21,7 @@ public class CollectHathPerksMetricsJob : IJob
     {
         _logger.LogDebug("Begin collect hath perks metrics");
         var resp = await _client.MyHome.GetHathPerksAsync(context.CancellationToken);
-        _logger.LogDebug("EH raw response: page {page}, html: {html}", "MyHome.HathPerks", resp.RawStringBody);
+        _logger.LogTrace("EH raw response: page {page}, html: {html}", "MyHome.HathPerks", resp.RawStringBody);
         _metricsCollector.SetHathPerks(resp.Body!);
     }
 }
