@@ -5,7 +5,7 @@ services:
       context: ../src
       network: host
       target: app
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ../docker/Dockerfile
       args:
         - GIT_REF
         - GIT_REF_TYPE
