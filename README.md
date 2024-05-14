@@ -54,7 +54,7 @@ hath_settings_metrics_45044: {                //* unique name
 - [HomeOverview](#CollectHomeOverviewMetricsJob)
 - [CheckNewReleases](#CheckNewReleasesJob)
 
-### See default config at [appsettings.json](/src/appsettings.json)
+### See default config at [appsettings.json](/src/ArkProjects.EHentai.MetricsCollector/appsettings.json)
 
 ### Collect`HathStatus`MetricsJob
 ```
