@@ -14,6 +14,9 @@ Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/sna
 
 ## Changelog
 
+### v1.1.1 - Features
+- add `client_name` to metrics `eh_hath_clients_ranges_groups_number`, `eh_hath_clients_ranges_number`
+
 ### v1.1.0 - Fixes/features
 - fix job `CollectHathSettingsMetricsJob`
 - add metric `eh_hath_clients_ranges_groups_number`
@@ -98,7 +101,7 @@ Site page: /hentaiathome.php?cid=<ClientId>&act=settings
 |Name|Desc|Labels|Type|
 |----|----|------|----|
 |eh_hath_clients_ranges_number|E-Hentai H@H client static ranges|client_id|Gauge|
-|eh_hath_clients_ranges_groups_number|E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)|client_id, group_type|Gauge|
+|eh_hath_clients_ranges_groups_number|E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)|client_id, client_name, group_type|Gauge|
 
 
 ### Collect`HathPerks`MetricsJob

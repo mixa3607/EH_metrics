@@ -194,13 +194,15 @@ public class MetricsCollectorService
                 {
                     new()
                     {
-                        Name = "eh_hath_clients_ranges_number", Labels = new[] { "client_id" },
+                        Name = "eh_hath_clients_ranges_number",
+                        Labels = new[] { "client_id", "client_name" },
                         Description = "E-Hentai H@H client static ranges",
                         Type = typeof(Gauge),
                     },
                     new()
                     {
-                        Name = "eh_hath_clients_ranges_groups_number", Labels = new[] { "client_id", "group_type" },
+                        Name = "eh_hath_clients_ranges_groups_number",
+                        Labels = new[] { "client_id", "client_name", "group_type" },
                         Description = "E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)",
                         Type = typeof(Gauge),
                     },
@@ -274,14 +276,16 @@ public class MetricsCollectorService
 
         if (resp.StaticRanges != -1)
         {
-            Set("eh_hath_clients_ranges_number", resp.StaticRanges, resp.ClientId.ToString());
+            Set("eh_hath_clients_ranges_number", resp.StaticRanges,
+                resp.ClientId.ToString(), resp.ClientName ?? "");
         }
 
         if (resp.StaticRangeGroups != null)
         {
             foreach (var (type, value) in resp.StaticRangeGroups)
             {
-                Set("eh_hath_clients_ranges_groups_number", value, resp.ClientId.ToString(), type.ToString());
+                Set("eh_hath_clients_ranges_groups_number", value,
+                    resp.ClientId.ToString(), resp.ClientName ?? "", type.ToString());
             }
         }
     }

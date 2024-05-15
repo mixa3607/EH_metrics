@@ -7,7 +7,7 @@
     <Description>EHentai prometheus metrics exporter</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ArkProjects.EHentai.Api" Version="2.1.0" />
+    <PackageReference Include="ArkProjects.EHentai.Api" Version="2.1.1" />
     <PackageReference Include="prometheus-net" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="Quartz" Version="3.9.0" />
