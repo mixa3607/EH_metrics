@@ -198,6 +198,12 @@ public class MetricsCollectorService
                         Description = "E-Hentai H@H client static ranges",
                         Type = typeof(Gauge),
                     },
+                    new()
+                    {
+                        Name = "eh_hath_clients_ranges_groups_number", Labels = new[] { "client_id", "group_type" },
+                        Description = "E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)",
+                        Type = typeof(Gauge),
+                    },
                 }
             },
         };
@@ -266,7 +272,18 @@ public class MetricsCollectorService
         void Set(string name, double v, params string[] l) =>
             GetGauge(name).WithLabels(l).Set(v);
 
-        Set("eh_hath_clients_ranges_number", resp.StaticRanges, resp.ClientId.ToString());
+        if (resp.StaticRanges != -1)
+        {
+            Set("eh_hath_clients_ranges_number", resp.StaticRanges, resp.ClientId.ToString());
+        }
+
+        if (resp.StaticRangeGroups != null)
+        {
+            foreach (var (type, value) in resp.StaticRangeGroups)
+            {
+                Set("eh_hath_clients_ranges_groups_number", value, resp.ClientId.ToString(), type.ToString());
+            }
+        }
     }
 
     public void SetHathStatus(HathStatusResponse resp)

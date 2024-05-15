@@ -14,13 +14,18 @@ Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/sna
 
 ## Changelog
 
+### v1.1.0 - Fixes/features
+- fix job `CollectHathSettingsMetricsJob`
+- add metric `eh_hath_clients_ranges_groups_number`
+- update grafana schema
+
 ### v1.0.0 - Fixes/updates/features
 - changes in jobs configuration (array[] => dictionary{}, many jobs enabled by default)
 - fix metrics (`eh_hath_regions_miss_percent` => `eh_hath_regions_hits_per_second_ratio`)
 - add new versions checker
 - update to dotnet 8
 - now container is rootless (port changed 80 => 8080)
-- add prometheus schema
+- add grafana schema
 
 ### v0.1.0 - First release
 - initial release
@@ -87,6 +92,7 @@ Site page: /hentaiathome.php?cid=<ClientId>&act=settings
 |Name|Desc|Labels|Type|
 |----|----|------|----|
 |eh_hath_clients_ranges_number|E-Hentai H@H client static ranges|client_id|Gauge|
+|eh_hath_clients_ranges_groups_number|E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)|client_id, group_type|Gauge|
 
 
 ### Collect`HathPerks`MetricsJob
