@@ -10,7 +10,7 @@ This soft periodically checks the specified e-hentai pages and extracts metrics 
 
 > Docker-Compose example located in [docker-compose.example](./docker-compose.example)
 
-Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/snapshot/iXowOeW8TVsZKV1NtEYxFMAtoOK32Asw) and [json schema](/EH-1715718683526.json)
+Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/snapshot/iXowOeW8TVsZKV1NtEYxFMAtoOK32Asw) and [json schema](/EH-1715789893565.json)
 
 ## Changelog
 
@@ -37,6 +37,12 @@ Required site client settings `EhClient{}`:
   "MemberId": "9965000",                            //* ipb_member_id cookie
   "PassHash": "bbc23afa07096d2f700b1d48c1ba777f",   //* ipb_pass_hash cookie
   "SessionId": "5529515b6d7a892362de74e2b444c987",  //* ipb_session_id cookie
+  // proxy is optional
+  //"Proxy": {
+  //  "Address": "socks5://127.0.0.1:2080", //* supported http/https/socks4/socks5
+  //  "UserName": "<login>",                //  password / login is optional
+  //  "Password": "<pass>",                 //  password / login is optional
+  //}
 }
 ```
 
