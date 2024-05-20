@@ -158,7 +158,7 @@ Check speed test directly to hath client.
 
 |Name|Desc|Labels|Type|
 |----|----|------|----|
-|eh_hath_client_direct_speed_test_kbps|E-Hentai H@H client speed test result|client_id, client_name, host|Histogram|
+|eh_hath_client_direct_speed_test_kbps|E-Hentai H@H client speed test result|client_id, client_name, host|Gauge|
 |eh_hath_client_direct_speed_test_errors_number|E-Hentai H@H client speed test failed|client_id, client_name, host|Counter|
 
 ## Scrapper metrics

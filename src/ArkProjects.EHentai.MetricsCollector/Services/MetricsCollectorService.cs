@@ -217,8 +217,7 @@ public class MetricsCollectorService
                         Name = "eh_hath_client_direct_speed_test_kbps",
                         Labels = new[] { "client_id", "client_name", "host" },
                         Description = "E-Hentai H@H client speed test result",
-                        Type = typeof(Histogram),
-                        Buckets = new double[] { 500, 1000, 2000, 4000, 6000, 10000, 15000, 20000, 30000, 45000 }
+                        Type = typeof(Gauge)
                     },
                     new()
                     {
@@ -268,7 +267,7 @@ public class MetricsCollectorService
     public void SetDirectSpeedTest(string clientName, long clientId, string host, int kbps, bool withError)
     {
         var labels = new[] { clientName, clientId.ToString(), host };
-        GetHistogram("eh_hath_client_direct_speed_test_kbps").WithLabels(labels).Observe(kbps);
+        GetGauge("eh_hath_client_direct_speed_test_kbps").WithLabels(labels).Set(kbps);
         GetCounter("eh_hath_client_direct_speed_test_errors_number").WithLabels(labels).Inc(withError ? 0 : 1);
     }
 
