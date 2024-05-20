@@ -266,7 +266,7 @@ public class MetricsCollectorService
 
     public void SetDirectSpeedTest(string clientName, long clientId, string host, int kbps, bool withError)
     {
-        var labels = new[] { clientName, clientId.ToString(), host };
+        var labels = new[] { clientId.ToString(), clientName, host };
         GetGauge("eh_hath_client_direct_speed_test_kbps").WithLabels(labels).Set(kbps);
         GetCounter("eh_hath_client_direct_speed_test_errors_number").WithLabels(labels).Inc(withError ? 0 : 1);
     }
