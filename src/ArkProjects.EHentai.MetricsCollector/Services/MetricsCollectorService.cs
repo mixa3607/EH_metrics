@@ -17,6 +17,7 @@ public class MetricsCollectorService
         public string Description;
         public string[] Labels;
         public Type Type;
+        public double[]? Buckets;
     }
 
     public MetricsCollectorService(IOptions<EHentaiClientOptionsDi> ehOptions, ILogger<MetricsCollectorService> logger)
@@ -208,6 +209,26 @@ public class MetricsCollectorService
                     },
                 }
             },
+            {
+                "ClientDirectUserSpeedTest", new MetricDef[]
+                {
+                    new()
+                    {
+                        Name = "eh_hath_client_direct_speed_test_kbps",
+                        Labels = new[] { "client_id", "client_name", "host" },
+                        Description = "E-Hentai H@H client speed test result",
+                        Type = typeof(Histogram),
+                        Buckets = new double[] { 500, 1000, 2000, 4000, 6000, 10000, 15000, 20000, 30000, 45000 }
+                    },
+                    new()
+                    {
+                        Name = "eh_hath_client_direct_speed_test_errors_number",
+                        Labels = new[] { "client_id", "client_name", "host" },
+                        Description = "E-Hentai H@H client speed test failed",
+                        Type = typeof(Counter),
+                    },
+                }
+            },
         };
         //var sb = new System.Text.StringBuilder();
         //foreach (var def in defs)
@@ -242,6 +263,13 @@ public class MetricsCollectorService
 
         GetHistogram("eh_job_run_time_seconds").WithLabels(jobFullName).Observe(jobContext.JobRunTime.Seconds);
         GetCounter("eh_job_failures_number").WithLabels(jobFullName).Inc(ex == null ? 0 : 1);
+    }
+
+    public void SetDirectSpeedTest(string clientName, long clientId, string host, int kbps, bool withError)
+    {
+        var labels = new[] { clientName, clientId.ToString(), host };
+        GetHistogram("eh_hath_client_direct_speed_test_kbps").WithLabels(labels).Observe(kbps);
+        GetCounter("eh_hath_client_direct_speed_test_errors_number").WithLabels(labels).Inc(withError ? 0 : 1);
     }
 
 
@@ -342,6 +370,7 @@ public class MetricsCollectorService
             c.collector ??= _metricFactory.CreateHistogram(c.def.Name, c.def.Description, c.def.Labels,
                 new HistogramConfiguration()
                 {
+                    Buckets = c.def.Buckets,
                     SuppressInitialValue = false
                 });
             return (Histogram)c.collector;

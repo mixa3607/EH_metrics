@@ -14,6 +14,9 @@ Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/sna
 
 ## Changelog
 
+### v1.2.0 - Features
+- add job `ClientDirectUserSpeedTestJob`
+
 ### v1.1.1 - Features
 - add `client_name` to metrics `eh_hath_clients_ranges_groups_number`, `eh_hath_clients_ranges_number`
 
@@ -67,6 +70,7 @@ hath_settings_metrics_45044: {                //* unique name
 - [HathPerks](#CollectHathPerksMetricsJob)
 - [HomeOverview](#CollectHomeOverviewMetricsJob)
 - [CheckNewReleases](#CheckNewReleasesJob)
+- [ClientDirectUserSpeedTest](#ClientDirectUserSpeedTestJob)
 
 ### See default config at [appsettings.json](/src/ArkProjects.EHentai.MetricsCollector/appsettings.json)
 
@@ -95,7 +99,7 @@ Site page: /hentaiathome.php
 ### Collect`HathSettings`MetricsJob
 ```
   JobType: CollectHathSettingsMetricsJob
-  JobData: ClientId = H@H client id
+  JobData: ClientId* = H@H client id
 Site page: /hentaiathome.php?cid=<ClientId>&act=settings
 ```
 |Name|Desc|Labels|Type|
@@ -140,6 +144,22 @@ Site page: /home.php
 |----|----|------|----|
 |eh_app_version_state|Version check status. 0 - unknown, 1 - latest, 2 - outdated||Gauge|
 
+### `ClientDirectUserSpeedTest`Job
+```
+  JobType: ClientDirectUserSpeedTestJob
+  JobData: ClientId*    = H@H client id
+           ClientKey*   = H@H client key 
+           ClientHost*  = H@H client host in format <protocol>://<host>:<port> (https://127.0.0.1:443)
+           ClientName   = H@H client name that for metric label: Default: ""
+           SizeBytes    = Size of each request in bytes. Default: 2097152 (2mb)
+           ThreadsCount = Threads count. Default: 3
+```
+Check speed test directly to hath client.
+
+|Name|Desc|Labels|Type|
+|----|----|------|----|
+|eh_hath_client_direct_speed_test_kbps|E-Hentai H@H client speed test result|client_id, client_name, host|Histogram|
+|eh_hath_client_direct_speed_test_errors_number|E-Hentai H@H client speed test failed|client_id, client_name, host|Counter|
 
 ## Scrapper metrics
 |Name|Desc|Labels|Type|
