@@ -37,6 +37,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
         run: |
+            pwd
+            ls .
+            ls ./docker
             docker compose --env-file ./docker/build.env config
             export IMAGE_TAG=TMP
             docker compose --env-file ./docker/build.env build
