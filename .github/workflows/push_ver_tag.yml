@@ -35,7 +35,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
         run: |
-            docker compose --env-file ./docker/build.env config
-            docker compose --env-file ./docker/build.env build
+            export COMPOSE_FILE=./docker/build.yml
+            docker compose config
+            docker compose build
       - name: Push
         run: docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
