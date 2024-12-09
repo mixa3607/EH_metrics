@@ -123,12 +123,6 @@ public class MetricsCollectorService
                     },
                     new()
                     {
-                        Name = "eh_hath_regions_coverage_percent", Labels = new[] { "region" },
-                        Description = "E-Hentai H@H coverage",
-                        Type = typeof(Gauge),
-                    },
-                    new()
-                    {
                         Name = "eh_hath_regions_hits_per_gb_ratio", Labels = new[] { "region" },
                         Description = "E-Hentai H@H Hits/GB ratio",
                         Type = typeof(Gauge),
@@ -193,13 +187,6 @@ public class MetricsCollectorService
             {
                 "ClientSettings", new MetricDef[]
                 {
-                    new()
-                    {
-                        Name = "eh_hath_clients_ranges_number",
-                        Labels = new[] { "client_id", "client_name" },
-                        Description = "E-Hentai H@H client static ranges",
-                        Type = typeof(Gauge),
-                    },
                     new()
                     {
                         Name = "eh_hath_clients_ranges_groups_number",
@@ -301,12 +288,6 @@ public class MetricsCollectorService
         void Set(string name, double v, params string[] l) =>
             GetGauge(name).WithLabels(l).Set(v);
 
-        if (resp.StaticRanges != -1)
-        {
-            Set("eh_hath_clients_ranges_number", resp.StaticRanges,
-                resp.ClientId.ToString(), resp.ClientName ?? "");
-        }
-
         if (resp.StaticRangeGroups != null)
         {
             foreach (var (type, value) in resp.StaticRangeGroups)
@@ -327,7 +308,6 @@ public class MetricsCollectorService
             var region = hathRegionInfo.Region.ToString();
             Set("eh_hath_regions_netload_mbps", hathRegionInfo.NetLoad, region);
             Set("eh_hath_regions_hits_per_second_ratio", hathRegionInfo.HitsPerSecond, region);
-            Set("eh_hath_regions_coverage_percent", hathRegionInfo.Coverage, region);
             Set("eh_hath_regions_hits_per_gb_ratio", hathRegionInfo.HitsPerGb, region);
             Set("eh_hath_regions_quality_number", hathRegionInfo.Quality, region);
         }

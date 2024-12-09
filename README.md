@@ -14,6 +14,10 @@ Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/sna
 
 ## Changelog
 
+### v1.3.0 - Features
+- remove metric `eh_hath_clients_ranges_number`
+- remove metric `eh_hath_regions_coverage_percent`
+
 ### v1.2.0 - Features
 - add job `ClientDirectUserSpeedTestJob`
 
@@ -84,7 +88,6 @@ Site page: /hentaiathome.php
 |----|----|------|----|
 |eh_hath_regions_netload_mbps|E-Hentai H@H current network load|region|Gauge|
 |eh_hath_regions_hits_per_second_ratio|E-Hentai H@H current hits per second|region|Gauge|
-|eh_hath_regions_coverage_percent|E-Hentai H@H coverage|region|Gauge|
 |eh_hath_regions_hits_per_gb_ratio|E-Hentai H@H Hits/GB ratio|region|Gauge|
 |eh_hath_regions_quality_number|E-Hentai H@H quality|region|Gauge|
 |eh_hath_clients_files_served_number|E-Hentai H@H client files served|client_name, client_id|Gauge|
@@ -104,7 +107,6 @@ Site page: /hentaiathome.php?cid=<ClientId>&act=settings
 ```
 |Name|Desc|Labels|Type|
 |----|----|------|----|
-|eh_hath_clients_ranges_number|E-Hentai H@H client static ranges|client_id|Gauge|
 |eh_hath_clients_ranges_groups_number|E-Hentai H@H client static ranges per group (Priority[1-4], HighCapacity)|client_id, client_name, group_type|Gauge|
 
 
