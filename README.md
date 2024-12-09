@@ -14,7 +14,7 @@ Example of dashboard [real snapshot](https://snapshots.raintank.io/dashboard/sna
 
 ## Changelog
 
-### v1.3.0 - Features
+### v1.3.0 - Fixes
 - remove metric `eh_hath_clients_ranges_number`
 - remove metric `eh_hath_regions_coverage_percent`
 
